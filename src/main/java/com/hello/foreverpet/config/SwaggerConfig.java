@@ -17,6 +17,8 @@ public class SwaggerConfig {
                                 .version("v1.0")
                         )
                 )
+                .group("ForeverPet Group")
+                .displayName("Hello ForeverPet")
                 .build();
     }
 
