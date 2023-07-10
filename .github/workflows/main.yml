@@ -1,58 +1,82 @@
-# This workflow will build a Java project with Gradle
-# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+env:  
+  S3_BUCKET_NAME: foreverpets3
+  PROJECT_NAME: foreverpet
+  CODE_DEPLOY_APP_NAME: foreverpet
+  CODE_DEPLOY_GROUP_NAME: foreverpet-group
 
-# Repo Action 페이지에 나타날 이름 
-name: Spring Boot & Gradle CI/CD
+  
+name: deploy # (0) GitHub Action에서 보여질 이름을 지정합니다. 
 
-# Event Trigger
-# master branch에 push 또는 pull request가 발생할 경우 동작
-# branch 단위 외에도, tag나 cron 식 등을 사용할 수 있음
 on:
+  release:
+    types: [push] # (1) push시 자동으로 실행됩니다.
   push:
-    branches: [ main ]
+    branches: [main] # (2) main 브랜치에서 동작합니다.
   pull_request:
-    branches: [ main ]
+    branches: [main]
+  workflow_dispatch: # (3) 수동으로도 실행이 가능힙니다.
+
 
 jobs:
-  build:
-    # 실행 환경 지정
-    runs-on: ubuntu-latest
+  build: 
+    runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
+    permissions: 
+      contents: read 
+      packages: write
 
-    # Task의 sequence를 명시한다.
     steps:
-      - uses: actions/checkout@v2
+    - name: Checkout 
+      uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.    
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3 # (6) 
+      with:
+        java-version: '17' 
+        distribution: 'temurin' 
+        
+    - name: Grant execute permission for gradlew
+      run: chmod +x ./gradlew # (7)
+      shell: bash
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v1
-        with:
-          java-version: 17
+    - name: Build with Gradle
+      run: ./gradlew clean build -x test # (8)
+      shell: bash
+      
+    - name: Get current time
+      uses: 1466587594/get-current-time@v2  # (9)
+      id: current-time
+      with:
+        format: YYYY-MM-DDTHH-mm-ss 
+        utcOffset: "+09:00"
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+    - name: Show Current Time
+      run: echo "CurrentTime=${{steps.current-time.outputs.formattedTime}}" # (10)
+      shell: bash
+      
+    - name: Generate deployment package # (final)
+      run: |
+        mkdir -p before-deploy
+        cp scripts/*.sh before-deploy/
+        cp appspec.yml before-deploy/
+        cp build/libs/*.jar before-deploy/
+        cd before-deploy && zip -r before-deploy *
+        cd ../ && mkdir -p deploy
+        mv before-deploy/before-deploy.zip deploy/$PROJECT_NAME.zip
+      shell: bash
+      
+    - name: Make zip file
+      run: zip -r ./$PROJECT_NAME.zip .         # (12)
+      shell: bash
 
-      # Build
-      - name: Build with Gradle
-        run: ./gradlew clean build
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1      #(13)
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-northeast-2
 
-      # 전송할 파일을 담을 디렉토리 생성
-      - name: Make Directory for deliver
-        run: mkdir deploy
+    - name: Upload to S3
+      run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip    #(14)
 
-      # Jar 파일 Copy
-      - name: Copy Jar
-        run: cp ./build/libs/*.jar ./deploy/
-
-      # 압축파일 형태로 전달
-      - name: Make zip file
-        run: zip -r -qq -j ./springboot-intro-build.zip ./deploy
-
-      # S3 Bucket으로 copy
-      - name: Deliver to AWS S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws s3 cp \
-          --region ap-northeast-2 \
-          --acl private \ 
-	  ./foreverpet-backend.zip s3://foreverpets3/
+    - name: Code Deploy 
+      run: aws deploy create-deployment --application-name $CODE_DEPLOY_APP_NAME --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name $CODE_DEPLOY_GROUP_NAME --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$PROJECT_NAME.zip
