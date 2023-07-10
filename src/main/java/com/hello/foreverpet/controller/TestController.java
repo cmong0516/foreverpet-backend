@@ -8,6 +8,6 @@ public class TestController {
     @GetMapping("/")
     public String test() {
         // codedeploy log 확인용
-        return "Hello Foreverpet! ";
+        return "Hello Foreverpet.";
     }
 }
