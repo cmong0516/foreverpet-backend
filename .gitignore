@@ -7,7 +7,6 @@ build/
 application.yml
 application.properites
 application-oauth.properties
-application-real.properties
 application-real-db.yml
 
 
