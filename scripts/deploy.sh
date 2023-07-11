@@ -3,8 +3,16 @@
 REPOSITORY=/home/ec2-user/app/step2
 PROJECT_NAME=foreverpet-backend
 
+echo "> Build 파일 목록 확인"
+JAR_FILES=$(ls $REPOSITORY/zip/*.jar)
+
+if [ -z "$JAR_FILES" ]; then
+  echo "Error: No jar files found in $REPOSITORY/zip directory"
+  exit 1
+fi
+
 echo "> Build 파일 복사"
-cp $REPOSITORY/zip/*.jar $REPOSITORY/
+cp $JAR_FILES $REPOSITORY/
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 CURRENT_PID=$(pgrep -f $PROJECT_NAME)
