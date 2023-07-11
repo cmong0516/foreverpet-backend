@@ -1,10 +1,10 @@
 #!/bin/bash
 
 REPOSITORY=/home/ec2-user/app/step2
-PROJECT_NAME=foreverpet-backend #해당 위치에 properties에 작성한 프로젝트명과 동일하게 작성합니다.
+PROJECT_NAME=foreverpet-backend
 
 echo "> Build 파일 복사"
-cp $REPOSITORY/zip/*.jar $REPOSITORY/
+cp $REPOSITORY/zip/build/libs/foreverpet-backend-0.0.1-SNAPSHOT.jar $REPOSITORY/
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 CURRENT_PID=$(pgrep -f $PROJECT_NAME)
@@ -27,7 +27,7 @@ echo "> $JAR_NAME 에 실행권한 추가"
 chmod +x $JAR_NAME
 
 echo "> $JAR_NAME 실행"
-nohup java -jar \
-  -Dspring.config.location=classpath:/application.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.properties \
-  -Dspring.profile.active=real \
-  $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
+    nohup java -jar \
+        -Dspring.config.location=classpath:/application.yml,classpath:/application-real.properties,/home/ec2-user/app/application-oauth.properties,/home/ec2-user/app/application-real-db.yml \
+        -Dspring.profiles.active=real \
+        $JAR_NAME > $REPOSITORY/nohup.out 2>&1 &
