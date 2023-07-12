@@ -27,7 +27,18 @@ jobs:
 
     steps:
     - name: Checkout 
-      uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.    
+      uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.
+      
+# 빌드 전 .env파일 생성
+    - name: Generate Environment Variables File for Production
+      #2.$를 통해 변수 할당
+      run: |
+          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> .env
+       #1.여기서 secrets변수를 가져오고
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       
     - name: Set up JDK 17
       uses: actions/setup-java@v3 # (6) 
