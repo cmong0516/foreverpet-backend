@@ -18,4 +18,5 @@ public class Product {
     private Long productPrice;
 
     /* test 1*/
+    /* test 2*/
 }
