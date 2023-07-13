@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class InitDataService {
 
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostConstruct
     public void init() {
