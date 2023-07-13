@@ -12,6 +12,7 @@ public class ProductResponse {
     private Categories categories;
     private Long productPrice;
     private Long numberOfSold;
+    private String productImage;
 
     public ProductResponse(Product product) {
         this.id = product.getProductId();
@@ -20,5 +21,6 @@ public class ProductResponse {
         this.categories = product.getCategories();
         this.productPrice = product.getProductPrice();
         this.numberOfSold = product.getNumberOfSold();
+        this.productImage = product.getProductImage();
     }
 }
