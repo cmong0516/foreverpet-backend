@@ -35,5 +35,4 @@ public class ProductService {
             Product updatedProduct = product.updateProductByUpdateRequest(updateProductRequest);
         });
     }
-
 }
