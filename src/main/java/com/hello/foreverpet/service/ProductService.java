@@ -35,4 +35,10 @@ public class ProductService {
             Product updatedProduct = product.updateProductByUpdateRequest(updateProductRequest);
         });
     }
+
+    public void deleteProduct(Long id) {
+        Optional<Product> wantDeleteProduct = productJpaRepository.findById(id);
+        wantDeleteProduct.ifPresent(productJpaRepository::delete);
+    }
+
 }
