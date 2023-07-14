@@ -41,4 +41,7 @@ public class ProductService {
         wantDeleteProduct.ifPresent(productJpaRepository::delete);
     }
 
+    public ProductResponse findProductById(Long id) {
+        return productJpaRepository.findById(id).map(ProductResponse::new).orElseThrow(IllegalArgumentException::new);
+    }
 }
