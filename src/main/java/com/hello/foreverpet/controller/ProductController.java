@@ -62,7 +62,7 @@ public class ProductController {
 
     @Operation(summary = "상품 검색", description = "검색어를 포함하는 결과 반환")
     @GetMapping("/products/search")
-    public List<ProductResponse> searchProduct(@RequestParam String search) {
+    public List<ProductResponse> searchProduct(@RequestParam("search") String search) {
         return productService.searchProduct(search);
     }
 

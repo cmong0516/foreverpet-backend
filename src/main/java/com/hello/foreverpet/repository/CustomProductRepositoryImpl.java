@@ -23,8 +23,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
         return jpaQueryFactory.selectFrom(product)
                 .where(
                         containsProductName(search),
-                        containsDescription(search),
-                        eqPrice(search)
+                        containsDescription(search)
                 )
                 .fetch();
     }
@@ -45,7 +44,7 @@ public class CustomProductRepositoryImpl implements CustomProductRepository{
 
     private BooleanExpression eqPrice(String price) {
         if (price != null && !price.isEmpty()) {
-            return product.productPrice.eq(Long.valueOf(price));
+            return product.productPrice.eq(Long.parseLong(price));
         }
         return null;
     }
