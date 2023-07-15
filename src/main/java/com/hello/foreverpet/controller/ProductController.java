@@ -4,10 +4,7 @@ import com.hello.foreverpet.domain.dto.request.NewProductRequest;
 import com.hello.foreverpet.domain.dto.request.UpdateProductRequest;
 import com.hello.foreverpet.domain.dto.response.ProductResponse;
 import com.hello.foreverpet.service.ProductService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -19,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Product API",description = "상품관리 API 입니다")
@@ -57,9 +55,15 @@ public class ProductController {
     }
 
     @Operation(summary = "상품 삭제",description = "id 로 상품을 삭제합니다.")
-    @DeleteMapping("/product/{id}")
+    @DeleteMapping("/products/{id}")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
+    }
+
+    @Operation(summary = "상품 검색", description = "검색어를 포함하는 결과 반환")
+    @GetMapping("/products/search")
+    public List<ProductResponse> searchProduct(@RequestParam String search) {
+        return productService.searchProduct(search);
     }
 
 }
