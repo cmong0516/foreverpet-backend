@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -15,51 +16,52 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @NotNull
     @Column(name = "user_no")
-    Long userNo;
+    private Long userNo;
 
     @NotNull
     @Column(name = "user_email")
-    String userEmail;
+    private String userEmail;
 
     @NotNull
     @Column(name = "user_pw")
-    String userPw;
+    private String userPw;
 
     @NotNull
     @Column(name = "user_phone")
-    String userPhone;
+    private String userPhone;
 
     @NotNull
     @Column(name = "user_address")
-    String userAddress;
+    private String userAddress;
 
     @NotNull
     @Column(name = "user_zipcode")
-    String userZipcode;
+    private String userZipcode;
 
     @Column(name = "user_social_type")
-    String userSocialType;
+    private String userSocialType;
 
     @Column(name = "user_access_token")
-    String userAccessToken;
+    private String userAccessToken;
 
     @NotNull
     @Column(name = "user_joindate")
-    Date userJoindate;
+    private LocalDate userJoindate;
 
     @NotNull
     @Column(name = "user_modifydate")
-    Date userModifydate;
+    private LocalDate userModifydate;
 
     @NotNull
     @Column(name = "user_delete_yn")
-    Boolean userDeleteYn;
+    private Boolean userDeleteYn;
 
     @NotNull
     @Column(name = "user_point")
-    Integer userPoint;
+    private Integer userPoint;
 
     @NotNull
     @Column(name = "user_profile_image")
-    String userProfileImage;
+    private String userProfileImage;
+
 }
