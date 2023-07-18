@@ -1,9 +1,3 @@
-env: 
-  S3_BUCKET_NAME: foreverpets3
-  PROJECT_NAME: foreverpet-backend
-  CODE_DEPLOY_APP_NAME: foreverpet-backend
-  CODE_DEPLOY_GROUP_NAME: foreverpet-group
-
 name: deploy # (0) GitHub Action에서 보여질 이름을 지정합니다. 
 
 on:
@@ -14,19 +8,24 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch: # (3) 수동으로도 실행이 가능합니다.
-
-
-
+  
+env: 
+  S3_BUCKET_NAME: foreverpets3
+  PROJECT_NAME: foreverpet-backend
+  CODE_DEPLOY_APP_NAME: foreverpet-backend
+  CODE_DEPLOY_GROUP_NAME: foreverpet-group
+  
 jobs:
   build: 
     runs-on: ubuntu-latest # (4) 해당 스크립트를 작동할 OS 입니다.
-    permissions: 
+    permissions:
+      id-token: write
       contents: read 
       packages: write
 
     steps:
     - name: Checkout 
-      uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.    
+      uses: actions/checkout@v3  # (5) 프로젝트 코드를 CheckOut합니다.
       
     - name: Set up JDK 17
       uses: actions/setup-java@v3 # (6) 
@@ -59,12 +58,11 @@ jobs:
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1      #(13)
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:        
+        aws-access-key-id: ${{ inputs.AWS_ACCESS_KEY_ID ||  secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ inputs.AWS_SECRET_ACCESS_KEY ||  secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-northeast-2
         
-
     - name: Upload to S3
       run: aws s3 cp --region ap-northeast-2 ./$PROJECT_NAME.zip s3://$S3_BUCKET_NAME/$PROJECT_NAME/$PROJECT_NAME.zip  #(14)
 
