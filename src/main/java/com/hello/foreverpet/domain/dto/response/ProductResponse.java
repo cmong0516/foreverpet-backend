@@ -2,9 +2,12 @@ package com.hello.foreverpet.domain.dto.response;
 
 import com.hello.foreverpet.domain.dto.Categories;
 import com.hello.foreverpet.domain.entity.Product;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 @Data
+@Schema(description = "상품 응답 DTO")
 public class ProductResponse {
     private Long id;
     private String productName;
@@ -13,6 +16,8 @@ public class ProductResponse {
     private Long productPrice;
     private Long numberOfSold;
     private String productImage;
+    private LocalDateTime createdDate;
+    private LocalDateTime modifiedDate;
 
     public ProductResponse(Product product) {
         this.id = product.getProductId();
@@ -22,5 +27,7 @@ public class ProductResponse {
         this.productPrice = product.getProductPrice();
         this.numberOfSold = product.getNumberOfSold();
         this.productImage = product.getProductImage();
+        this.createdDate = product.getCreateDate();
+        this.modifiedDate = product.getModifiedDate();
     }
 }
